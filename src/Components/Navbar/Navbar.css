@@ -1,0 +1,43 @@
+.navbar{
+    display:flex;
+    justify-content: space-between; /* This will place elements at the start and end */
+    padding: 16px; 
+    box-shadow: 0 1px 3px -2px black;
+    align-items: center; /* Vertical alignment */
+}
+.nav-logo{
+    width: 100px; 
+    height: auto; 
+}
+
+
+.searchInputs {
+    display:flex;
+    color:black;
+    /*border:1px solid currentcolor*/
+}
+.search input {
+    color:white;
+    background-color:white;
+    border-radius: 2px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    font-size:18px;
+    padding:15px;
+    height: 5px;
+    width:300px;
+
+}
+.searchIcon {
+    height: 40px; 
+    width: 50px; 
+    display:grid;
+    place-items:center;
+    background-color:white;
+}
+.searchIcon svg {
+    font-size: 35px;
+}
+.searchButton{
+    border-color:white;
+}
