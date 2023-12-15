@@ -40,9 +40,7 @@
 
   
 .dropdown .dropbtn {
-    width: 100px;
     object-fit: contain; /*keep its aspect ratio*/
-    margin: 0 20px; /*top and bottom/ left and right*/
 
     font-size: 16px;  
     border: none;

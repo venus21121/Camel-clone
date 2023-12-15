@@ -2,7 +2,7 @@ import React from "react";
 import "./Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
-
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 function Header() {
   return (
     <div className="header">
@@ -19,6 +19,7 @@ function Header() {
         {/*header profile drop down for create acct and sign in*/}
         <button className="dropbtn">
           <PersonIcon className="person_icon" />
+          <ArrowDropDownIcon />
         </button>
         <div class="dropdown-content">
           <a href="#">Create Free Account</a>
