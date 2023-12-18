@@ -59,7 +59,7 @@ a:hover, .dropdown:hover .dropbtn {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    z-index: 1;
+    z-index: 1; /*on top of everything else, -1 is below everything else*/
 }
   
 .dropdown-content a {
