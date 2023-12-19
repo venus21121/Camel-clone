@@ -7,21 +7,25 @@ function Home() {
     <div className="home">
       <div className="home_container">
         <h1>Popular Products</h1>
-      </div>
-      <div className="product_items_row1">
-        {/* Product */}
-        <Product />
-        {/* Product */}
-        {/* Product */}
-        {/* Product */}
-        {/* Product */}
-      </div>
-      <div className="product_items_row2">
-        {/* Product */}
-        {/* Product */}
-        {/* Product */}
-        {/* Product */}
-        {/* Product */}
+        <div className="product_items_row">
+          <Product />
+          <Product />
+          <Product />
+          <Product />
+          <Product />
+
+          {/* Product */}
+          {/* Product */}
+          {/* Product */}
+          {/* Product */}
+        </div>
+        <div className="product_items_row">
+          {/* Product */}
+          {/* Product */}
+          {/* Product */}
+          {/* Product */}
+          {/* Product */}
+        </div>
       </div>
     </div>
   );

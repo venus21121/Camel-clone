@@ -1,0 +1,16 @@
+.home {
+    display: flex; 
+    justify-content: center;
+    margin-left:auto;
+    margin-right:auto;
+    max-width: 1500px;
+}
+.home_container{
+    width: 100%;
+}
+.product_items_row{
+    display: flex; 
+    margin-left:5px;
+    margin-right:5px;
+
+}
