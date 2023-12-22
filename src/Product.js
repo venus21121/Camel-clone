@@ -1,27 +1,24 @@
 import React from "react";
 import "./Product.css";
-function Product() {
+function Product({ image, title, b_price, l_price, a_price }) {
   return (
     <div className="product">
-      <img
-        className="product_img"
-        src="https://m.media-amazon.com/images/I/51kZmRLNSQL.jpg"
-      />
+      <img className="product_img" src={image} alt="" />
       <div className="product_container">
-        <p> Learning Resources 3060 Farmers Market Color sorting Set</p>
+        <p>{title}</p>
         <div className="prices">
           <div className="best_price_text">
             <p>Best Price</p>
           </div>
           <div className="best_price">
             <small>$</small>
-            <strong> 17.49</strong>
+            <strong> {b_price}</strong>
           </div>
           <div className="list_price">
-            <p>List price: $45.99</p>
+            <p>List price: ${l_price}</p>
           </div>
           <div className="avg_price">
-            <p>Average price: $30.09</p>
+            <p>Average price: ${a_price}</p>
           </div>
           <button className="amazon_link">View at Amazon</button>
         </div>
