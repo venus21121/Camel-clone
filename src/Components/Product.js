@@ -1,6 +1,6 @@
 import React from "react";
 import "./Product.css";
-function Product({ image, title, b_price, l_price, a_price }) {
+function Product({ id, image, title, b_price, url }) {
   return (
     <div className="product">
       <img className="product_img" src={image} alt="" />
@@ -15,12 +15,14 @@ function Product({ image, title, b_price, l_price, a_price }) {
             <strong> {b_price}</strong>
           </div>
           <div className="list_price">
-            <p>List price: ${l_price}</p>
+            <p>List price: $</p>
           </div>
           <div className="avg_price">
-            <p>Average price: ${a_price}</p>
+            <p>Average price: $</p>
           </div>
-          <button className="amazon_link">View at Amazon</button>
+          <a className="link" href={url}>
+            <button className="amazon_link">View at Amazon</button>
+          </a>
         </div>
       </div>
 
