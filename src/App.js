@@ -5,6 +5,7 @@ import Home from "./Components/Home.js";
 import Pricewatch from "./Components/Pricewatch.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import User from "./Components/User.js";
 const App = () => {
   const [products, setProducts] = useState([]);
 
@@ -17,7 +18,6 @@ const App = () => {
       console.log(err);
     }
   };
-
   useEffect(() => {
     getProducts();
   }, []);
@@ -41,6 +41,15 @@ const App = () => {
             element={
               <>
                 <Home h_products={products} />
+              </>
+            }
+          />
+          {/*login route*/}
+          <Route
+            path="/user"
+            element={
+              <>
+                <User />
               </>
             }
           />
