@@ -25,7 +25,7 @@ function Header() {
         </button>
         <div class="dropdown-content">
           <a href="#">Create Free Account</a>
-          <a href="/user">Sign In</a>
+          <a href="/login">Sign In</a>
         </div>
       </div>
     </div>
