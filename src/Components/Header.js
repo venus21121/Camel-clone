@@ -3,7 +3,16 @@ import "./Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { Link } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+
 function Header() {
+  const { isAuthenticated, logout } = useAuth(); // Access authentication context
+  const handleLogout = () => {
+    logout();
+    // Optionally navigate to login or root page
+    console.log("User logged out");
+  };
   return (
     <div className="header">
       <a href="/">
@@ -25,7 +34,14 @@ function Header() {
         </button>
         <div class="dropdown-content">
           <a href="#">Create Free Account</a>
-          <a href="/login">Sign In</a>
+          {/*<Link to="/login">Sign In</Link>*/}
+          <div className="navigation-links">
+            {isAuthenticated ? (
+              <Link onClick={handleLogout}>Logout</Link>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

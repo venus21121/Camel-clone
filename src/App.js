@@ -6,6 +6,8 @@ import Pricewatch from "./Components/Pricewatch.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Login from "./Components/Login.js";
+import { AuthProvider } from "./Components/AuthContext"; // Import the AuthProvider
+
 const App = () => {
   const [products, setProducts] = useState([]);
 
@@ -23,39 +25,41 @@ const App = () => {
   }, []);
 
   return (
-    <div className="app">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route
-            path="/pricewatch"
-            element={
-              <>
-                <Pricewatch />
-              </>
-            }
-          />
-          {/* Home // the components below header*/}
-          <Route
-            path="/"
-            element={
-              <>
-                <Home h_products={products} />
-              </>
-            }
-          />
-          {/*login route*/}
-          <Route
-            path="/login"
-            element={
-              <>
-                <Login />
-              </>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <div className="app">
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route
+              path="/pricewatch"
+              element={
+                <>
+                  <Pricewatch />
+                </>
+              }
+            />
+            {/* Home // the components below header*/}
+            <Route
+              path="/"
+              element={
+                <>
+                  <Home h_products={products} />
+                </>
+              }
+            />
+            {/*login route*/}
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Login />
+                </>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </AuthProvider>
   );
 };
 

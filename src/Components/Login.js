@@ -1,20 +1,52 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./Login.css";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useAuth } from "./AuthContext";
 
 function Login() {
   const [email, setEmail] = useState(""); // storing current inserted email
   const [password, setPassword] = useState(""); // storing current inserted password
+  const { login } = useAuth();
+
+  const navigate = useNavigate(); // For redirection
+
+  const handleLogin = () => {
+    login();
+    navigate("/");
+    console.log("user logged in");
+  };
 
   // handle the case when the submit button is pressed
   // we can print out in the console for now.
-  const handleSubmit = (e) => {
+  // send data to backend to check if login successful else throw exception
+  const handleSubmit = async (e) => {
     e.preventDefault(); // to prevent from reloading the page and losing our current state
-    console.log(email + password);
+    console.log("Email: ", email, "Password: ", password);
+    // Check if both email and password are filled
+    // For Debugging
+    handleLogin();
+
+    if (email && password) {
+      try {
+        // sending data to backendend
+        const response = await axios.post("http://localhost:8080/login", {
+          email: email,
+          password: password,
+        });
+        // if login successfully, then redirect
+        console.log("Login Successful", response.data);
+        navigate("/"); //redirect to home
+      } catch (error) {
+        console.error(
+          "Login Error:",
+          error.response ? error.response.data : error
+        );
+      }
+    } else {
+      console.error("Both email and password must be filled out.");
+    }
   };
-
-  // check if both email and password are filled
-  const isFromFilled = email.length > 0 && password.length > 0;
-
   return (
     <div className="login">
       <div className="login_container">
@@ -43,7 +75,11 @@ function Login() {
                 name="password"
               />
             </label>
-            <input type="submit" value="Log in" disabled={!isFromFilled} />
+            <input
+              type="submit"
+              value="Log in"
+              //disabled={!email || !password} // empty string is falsy
+            />
           </form>
           <button>Create Free Account</button>
         </div>
