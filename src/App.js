@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Login from "./Components/Login.js";
 import { AuthProvider } from "./Components/AuthContext"; // Import the AuthProvider
+import Register from "./Components/Register.js";
 
 const App = () => {
   const [products, setProducts] = useState([]);
@@ -53,6 +54,14 @@ const App = () => {
               element={
                 <>
                   <Login />
+                </>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <>
+                  <Register />
                 </>
               }
             />

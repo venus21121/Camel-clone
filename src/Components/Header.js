@@ -33,7 +33,7 @@ function Header() {
           <ArrowDropDownIcon />
         </button>
         <div class="dropdown-content">
-          <a href="#">Create Free Account</a>
+          <Link to="/register">Create Free Account</Link>
           {/*<Link to="/login">Sign In</Link>*/}
           <div className="navigation-links">
             {isAuthenticated ? (

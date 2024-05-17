@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Login.css";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useAuth } from "./AuthContext";
 
 function Login() {
@@ -25,18 +25,17 @@ function Login() {
     console.log("Email: ", email, "Password: ", password);
     // Check if both email and password are filled
     // For Debugging
-    handleLogin();
 
     if (email && password) {
       try {
         // sending data to backendend
-        const response = await axios.post("http://localhost:8080/login", {
+        const response = await axios.post("http://localhost:8080/user/login", {
           email: email,
           password: password,
         });
         // if login successfully, then redirect
         console.log("Login Successful", response.data);
-        navigate("/"); //redirect to home
+        handleLogin();
       } catch (error) {
         console.error(
           "Login Error:",
@@ -81,7 +80,9 @@ function Login() {
               //disabled={!email || !password} // empty string is falsy
             />
           </form>
-          <button>Create Free Account</button>
+          <Link to="/register">
+            <button>Create Free Account</button>
+          </Link>
         </div>
       </div>
     </div>
