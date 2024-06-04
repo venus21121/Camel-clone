@@ -19,7 +19,7 @@ export const useAuth = () => useContext(AuthContext);
 /* AuthProvider: This is a React component that sserves as the provider for the AuthContext. 
    All children components inside this provider can access the context value */
 export const AuthProvider = ({ children }) => {
-  // useState(faluse) initializes the isAuthenticated state with fallse, indicating that the user is initially not logged in.
+  // useState(false) initializes the isAuthenticated state with fallse, indicating that the user is initially not logged in.
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   console.log("Authentication status:", isAuthenticated); // Monitor auth status

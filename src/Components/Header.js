@@ -5,10 +5,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import axios from "axios";
 
 function Header() {
   const { isAuthenticated, logout } = useAuth(); // Access authentication context
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await axios.post("http://localhost:8080/user/logout");
     logout();
     // Optionally navigate to login or root page
     console.log("User logged out");
@@ -33,13 +35,18 @@ function Header() {
           <ArrowDropDownIcon />
         </button>
         <div class="dropdown-content">
-          <Link to="/register">Create Free Account</Link>
           {/*<Link to="/login">Sign In</Link>*/}
           <div className="navigation-links">
             {isAuthenticated ? (
-              <Link onClick={handleLogout}>Logout</Link>
+              <>
+                <Link> My Account</Link>
+                <Link onClick={handleLogout}>Logout</Link>
+              </>
             ) : (
-              <Link to="/login">Login</Link>
+              <>
+                <Link to="/register">Create Free Account</Link>
+                <Link to="/login">Login</Link>
+              </>
             )}
           </div>
         </div>

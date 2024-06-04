@@ -1,0 +1,23 @@
+.register {
+    display: flex; 
+    justify-content: center;
+    margin-left:auto;
+    margin-right:auto;
+    max-width: 1500px;
+}
+.register_container{
+    width: 100%;
+    margin-top: 20px;
+    margin-left : 20px;
+}
+.register_input{
+    width: 50%;
+}
+.register_input input {
+    width:100%;
+    padding:6px 10px;
+    margin:10px 0;
+}
+.register_error{
+    color:red;
+}
