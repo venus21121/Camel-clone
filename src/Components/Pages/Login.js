@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./Login.css";
 import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../Navigation/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState(""); // storing current inserted email

@@ -1,6 +1,6 @@
 import React from "react";
 import "./Home.css";
-import Product from "./Product.js";
+import Product from "../Navigation/Product.js";
 
 function Home({ h_products }) {
   const itemsPerRow = 3;

@@ -1,0 +1,52 @@
+.product_page {
+    display:flex; /*everything goes into a row*/
+    flex-direction: column;
+    align-items: center;
+    justify-content:flex-end; 
+    margin: 0px 80px; 
+    padding: 20px;
+    max-height: 400px;
+    min-height: 100px; 
+    background-color: white;
+    z-index: 1;
+    border: 1px solid rgb(240, 238, 238);
+}
+
+.product_info_row {
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+.column {
+    float:left;
+    width:33.33%;
+}
+.product_name{
+    color: blue;
+}
+.product_current_price {
+    color: green;
+}
+.product_price_column {
+    text-align: right;
+}
+.amazon_link {
+        background: #f0c14b;
+        border: 1px solid;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding: 5px 20px;
+        border-color: #a88734 #9c7e31 #846a29; 
+        color: #111;
+        font-weight: bold;
+    
+    
+}
+.amazon_link:hover{  
+    background-color: #e2ad32; /* Change background color on hover and focus */
+}
+.price_watch_button{
+    padding: 5px 20px;
+    font-weight: bold;
+
+}

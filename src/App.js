@@ -1,13 +1,14 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./Components/Header.js";
-import Home from "./Components/Home.js";
-import Pricewatch from "./Components/Pricewatch.js";
+import Header from "./Components/Navigation/Header.js";
+import Home from "./Components/Pages/Home.js";
+import Pricewatch from "./Components/Navigation/Pricewatch.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Login from "./Components/Login.js";
-import { AuthProvider } from "./Components/AuthContext"; // Import the AuthProvider
-import Register from "./Components/Register.js";
+import Login from "./Components/Pages/Login.js";
+import { AuthProvider } from "./Components/Navigation/AuthContext.js"; // Import the AuthProvider
+import Register from "./Components/Pages/Register.js";
+import ProductPage from "./Components/Pages/ProductPage.js";
 
 const App = () => {
   const [products, setProducts] = useState([]);
@@ -62,6 +63,14 @@ const App = () => {
               element={
                 <>
                   <Register />
+                </>
+              }
+            />
+            <Route
+              path="/productpage"
+              element={
+                <>
+                  <ProductPage />
                 </>
               }
             />
