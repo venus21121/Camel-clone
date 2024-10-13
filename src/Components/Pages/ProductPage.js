@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import "./ProductPage.css";
 
 function ProductPage() {
   const [product, setProduct] = useState(null);

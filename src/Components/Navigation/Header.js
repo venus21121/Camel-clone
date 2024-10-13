@@ -63,7 +63,7 @@ function Header() {
       }
     } catch (err) {
       console.error("Error during search:", err);
-      nav(`/error?msg=${err.response?.data || "An error occurred"}`);
+      nav(`/error?sq=${search || "An error occurred"}`);
     }
   };
 
@@ -75,7 +75,7 @@ function Header() {
 
       <form className="flex flex-1 mx-4" onSubmit={handleSearch}>
         <input
-          className="border border-gray-300 rounded-l-md p-2 w-full"
+          className="border border-gray-300 rounded-l-md p-2 w-full text-black"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="search"
