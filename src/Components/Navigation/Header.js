@@ -1,42 +1,59 @@
-import React, { useState } from "react";
-import "./Header.css";
+import React, { useState, useRef, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; // Import useHistory hook
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import { useAuth } from "./AuthContext";
+import logo from "../../Assets/amaSave.png"; // Adjust the path as necessary
 import axios from "axios";
-// type rfce
+
 function Header() {
   const { isAuthenticated, logout } = useAuth(); // Access authentication context
   const [search, setSearch] = useState("");
   const nav = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown
+  const dropdownRef = useRef(null); // Reference for the dropdown
+
+  // Close dropdown when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    // Attach event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Cleanup event listener
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const handleLogout = async () => {
     await axios.post("http://localhost:8080/user/logout");
     logout();
-    // Optionally navigate to login or root page
     console.log("User logged out");
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    // send the search value to backend /product/search
+    // Check if search input is empty
+    if (search.trim() === "") {
+      return; // Exit the function early if the input is empty
+    }
+
     console.log("User has searched " + search);
     try {
       const response = await axios.get(
         `http://localhost:8080/product/search?input=${search}`
       );
-      console.log(response.data);
       if (Array.isArray(response.data)) {
-        // One product is found
         if (response.data.length === 1) {
           const productSku = response.data[0].productSku;
-          console.log("product sku is ", productSku);
           nav(`/productpage?sku=${productSku}`);
-        } // List of products are found
-        else if (response.data.length > 1) {
+        } else if (response.data.length > 1) {
           nav(`/search?sq=${search}`);
         } else {
           console.log("No products found");
@@ -45,72 +62,83 @@ function Header() {
         console.log("Unexpected response format");
       }
     } catch (err) {
-      if (err.response) {
-        // The request was made, but the server responded with a status code
-        // No products found
-        console.log("Error response data:", err.response.data);
-        nav(`/error?msg=${err.response.data}`);
-      } else if (err.request) {
-        // The request was made, but no response was received
-        console.log("Error request:", err.request);
-        alert("No response received from the server");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error message:", err.message);
-        alert("An error occurred: " + err.message);
-      }
+      console.error("Error during search:", err);
+      nav(`/error?msg=${err.response?.data || "An error occurred"}`);
     }
   };
 
   return (
-    <div className="header">
-      <a href="/">
-        <img
-          className="logo"
-          src="https://assets.camelcamelcamel.com/live-assets/camelcamelcamel-logo-2018-583259dd2c1880ff44d801e313ca1d885d2ea345690072a457c5af98b5ca513f.png"
-        />
-      </a>
+    <header className="flex items-center justify-between p-4 bg-[#232F3E] text-white shadow-md">
+      <Link to="/">
+        <img className="h-14" src={logo} alt="Logo" />
+      </Link>
 
-      <form className="search" onSubmit={handleSearch}>
+      <form className="flex flex-1 mx-4" onSubmit={handleSearch}>
         <input
-          className="search_input"
+          className="border border-gray-300 rounded-l-md p-2 w-full"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="search"
-          placeholder="Type product SKU"
+          placeholder="Find Amazon Products"
           id="search"
           name="search"
         />
-        <button type="submit">
-          <SearchIcon />
+        <button
+          type="submit"
+          className="bg-[#FF9900] text-white p-2 rounded-r-md"
+        >
+          <SearchIcon style={{ color: "white" }} />
         </button>
-        {/*<SearchIcon className="search_icon" />}
-        {/*search icon*/}
       </form>
-      <div className="dropdown">
-        {/*header profile drop down for create acct and sign in*/}
-        <button className="dropbtn">
-          <PersonIcon className="person_icon" />
+
+      <div className="relative" ref={dropdownRef}>
+        <button
+          className="flex items-center p-2 border border-gray-300 rounded-md focus:outline-none"
+          onClick={() => setDropdownOpen(!dropdownOpen)} // Toggle dropdown
+        >
+          <PersonIcon />
           <ArrowDropDownIcon />
         </button>
-        <div class="dropdown-content">
-          {/*<Link to="/login">Sign In</Link>*/}
-          <div className="navigation-links">
-            {isAuthenticated ? (
-              <>
-                <Link> My Account</Link>
-                <Link onClick={handleLogout}>Logout</Link>
-              </>
-            ) : (
-              <>
-                <Link to="/register">Create Free Account</Link>
-                <Link to="/login">Login</Link>
-              </>
-            )}
+
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+            <div className="py-2">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/account"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    My Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/register"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    Create Free Account
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
-    </div>
+    </header>
   );
 }
 

@@ -1,6 +1,4 @@
-import React from "react";
-import { useState } from "react";
-import "./Register.css";
+import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../Navigation/AuthContext";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -12,29 +10,16 @@ function Register() {
   const { login } = useAuth();
   const navigate = useNavigate(); // For redirection
 
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleRegister = () => {
-    login();
-    navigate("/");
-    console.log("New user registered");
-  };
-
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page refresh
-    // after submit form is pressed
+    e.preventDefault();
     try {
       const response = await axios.post("http://localhost:8080/user/register", {
         userEmail: email,
         password: password,
       });
       console.log("Register Successful", response.data);
-      handleRegister();
+      login();
+      navigate("/");
     } catch (error) {
       console.error(
         "Register Error:",
@@ -47,32 +32,43 @@ function Register() {
   };
 
   return (
-    <div className="register">
-      <div className="register_container">
-        <h1>Get started with a Free account</h1>
-        {registerError && <p className="register_error">{registerError}</p>}
-        {/* Conditional rendering of the message */}
-        <div className="register_input">
-          <form onSubmit={handleSubmit}>
-            <label>
-              Email Address:
-              <input type="email" value={email} onChange={handleEmail}></input>
-            </label>
-            <label>
-              Password:
-              <input
-                type="password"
-                value={password}
-                onChange={handlePassword}
-              ></input>
-              <input
-                type="submit"
-                value="Create Account"
-                disabled={!email || !password}
-              ></input>
-            </label>
-          </form>
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <h1 className="text-xl font-semibold mb-4">
+          Get started with a Free account
+        </h1>
+        {registerError && <p className="text-red-500 mb-4">{registerError}</p>}
+        <form onSubmit={handleSubmit}>
+          <label className="block mb-2">
+            Email Address:
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-gray-300 rounded-md p-2 w-full mb-4"
+              required
+            />
+          </label>
+          <label className="block mb-2">
+            Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-300 rounded-md p-2 w-full mb-4"
+              required
+            />
+          </label>
+          <button
+            type="submit"
+            className={`bg-blue-500 text-white p-2 rounded-md w-full ${
+              !email || !password ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={!email || !password}
+          >
+            Create Account
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Login.css";
 import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useAuth } from "../Navigation/AuthContext";
 
@@ -18,76 +17,71 @@ function Login() {
     console.log("user logged in");
   };
 
-  // handle the case when the submit button is pressed
-  // we can print out in the console for now.
-  // send data to backend to check if login successful else throw exception
   const handleSubmit = async (e) => {
-    e.preventDefault(); // to prevent from reloading the page and losing our current state
+    e.preventDefault();
     console.log("Email: ", email, "Password: ", password);
     setLoginError(""); // Clear previous errors
-
-    // Check if both email and password are filled
-    // For Debugging
 
     try {
       const response = await axios.post("http://localhost:8080/user/login", {
         userEmail: email,
         password: password,
       });
-      // Assume the backend sends back a success response
       console.log("Login Successful", response.data);
-      // Redirect to home or similar page
       handleLogin();
     } catch (error) {
-      // Handle HTTP errors (e.g., 401, 403) here
       if (error.response && error.response.status === 401) {
         setLoginError("Incorrect username or password. Please try again.");
       } else {
-        // Handle other kinds of errors (network error, server error, etc.)
         setLoginError("An error occurred. Please try again later.");
       }
       console.error("Login Error:", error);
     }
   };
+
   return (
-    <div className="login">
-      <div className="login_container">
-        <h1>Log In To Your Account</h1>
-        <div className="login_input">
-          {loginError && <p className="login_error">{loginError}</p>}
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="email">
-              Username or Email
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="youremail@gmail.com"
-                id="email"
-                name="email"
-              />
-            </label>
-            <label htmlFor="password">
-              Password
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                placeholder="**********"
-                id="password"
-                name="password"
-              />
-            </label>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <h1 className="text-xl font-semibold mb-4">Log In To Your Account</h1>
+        {loginError && <p className="text-red-500 mb-4">{loginError}</p>}
+        <form onSubmit={handleSubmit}>
+          <label className="block mb-2" htmlFor="email">
+            Username or Email
             <input
-              type="submit"
-              value="Log in"
-              disabled={!email || !password} // empty string is falsy
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="youremail@gmail.com"
+              id="email"
+              name="email"
+              className="border border-gray-300 rounded-md p-2 w-full mb-4"
             />
-          </form>
-          <Link to="/register">
-            <button>Create Free Account</button>
-          </Link>
-        </div>
+          </label>
+          <label className="block mb-2" htmlFor="password">
+            Password
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              placeholder="**********"
+              id="password"
+              name="password"
+              className="border border-gray-300 rounded-md p-2 w-full mb-4"
+            />
+          </label>
+          <button
+            type="submit"
+            className={`bg-blue-500 text-white p-2 rounded-md w-full ${
+              !email || !password ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={!email || !password}
+          >
+            Log in
+          </button>
+        </form>
+        <Link to="/register" className="block mt-4 text-center text-blue-500">
+          Create Free Account
+        </Link>
       </div>
     </div>
   );

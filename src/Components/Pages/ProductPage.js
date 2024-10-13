@@ -1,25 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import "./ProductPage.css";
 
 function ProductPage() {
   const [product, setProduct] = useState(null);
-
-  // call backend. GetProductBy(id)
-
   const amazonUrl = "https://www.amazon.com/dp/";
   const location = useLocation();
 
-  // Function to extract productId from query parameters
   const getQueryParam = (param) => {
     const params = new URLSearchParams(location.search);
     return params.get(param);
   };
   const productSku = getQueryParam("sku");
 
-  // Use the productSKu to fetch product details from API or state
   useEffect(() => {
     const fetchProductDetails = async (sku) => {
       try {
@@ -38,36 +32,47 @@ function ProductPage() {
 
   if (!product) return <div>Loading...</div>; // Handle loading state
 
-  // Handles param passed in url
-
   return (
-    <div className="product_page">
-      <div className="product_info_row">
-        <img className="column" src={product.imgUrl}></img>
-        <div className="column">
-          <p>Amazon Price History</p>
-          <div className="product_name">
-            <h2> {product.productName}</h2>
-          </div>
-          <p>
-            Sign up for price drop alerts by clicking a "Create Price Watch"
-            button below
-          </p>
-        </div>
-        <div className="column">
-          <div className="product_price_column">
-            <h2 className="product_current_price"> ${product.currentPrice}</h2>
-            <a className="link" href={amazonUrl + product.productSku}>
-              <button className="amazon_link">View at Amazon</button>
+    <div className="product_page p-6 ">
+      <div className="product_info_row flex items-start mb-4 ">
+        <img
+          className="w-48 h-48 object-contain rounded-lg mr-4" // Changed to object-contain
+          src={product.imgUrl}
+          alt={product.productName}
+        />
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold mb-2">{product.productName}</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold text-green-600">
+              ${product.currentPrice}
+            </h2>
+            <a
+              className="link"
+              href={amazonUrl + product.productSku}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="amazon_link bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 w-full">
+                View at Amazon
+              </button>
             </a>
           </div>
         </div>
       </div>
-      <button className="price_watch_button"> Create Price Watch</button>
-      <div className="product_detail">
-        <h3>Product Details</h3>
-        <h4>Product group</h4>
-        Manufactuerer Model Locale List Price EAN UPC SKU Last update scan
+      <div className="flex justify-center mb-4">
+        <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 w-48">
+          Create Price Watch
+        </button>
+      </div>
+      <hr className="my-4" /> {/* Horizontal line for separation */}
+      <div className="product_detail mt-4">
+        <h3 className="text-xl font-semibold mb-2">Product Details</h3>
+        <h4 className="text-lg font-medium">Product Group</h4>
+        <p>Manufacturer Model Locale List Price EAN UPC SKU Last Update Scan</p>
+      </div>
+      <div className="amazon_price_history mt-4">
+        <h3 className="text-xl font-semibold mb-2">Amazon Price History</h3>
+        {/* Price history chart or data can be rendered here */}
       </div>
     </div>
   );

@@ -19,3 +19,5 @@ When the expression on the left-hand side of `&&` evaluates to `true`, the value
 When the expression on the left-hand side of `&&` evaluates to `false`, the value of the expression on the left-hand side (LHS) is returned, and the evaluation of the expression stops there due to short-circuiting.
 
 ### `npm start`
+
+### `type rfce for shortcut`
