@@ -9,6 +9,8 @@ import Login from "./Components/Pages/Login.js";
 import { AuthProvider } from "./Components/Navigation/AuthContext.js"; // Import the AuthProvider
 import Register from "./Components/Pages/Register.js";
 import ProductPage from "./Components/Pages/ProductPage.js";
+import ProductSearchPage from "./Components/Pages/ProductsSearchPage.js";
+import ProductNotFoundPage from "./Components/Pages/ProductNotFoundPage.js";
 
 const App = () => {
   const [products, setProducts] = useState([]);
@@ -71,6 +73,22 @@ const App = () => {
               element={
                 <>
                   <ProductPage />
+                </>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <>
+                  <ProductSearchPage />
+                </>
+              }
+            />
+            <Route
+              path="/error"
+              element={
+                <>
+                  <ProductNotFoundPage />
                 </>
               }
             />

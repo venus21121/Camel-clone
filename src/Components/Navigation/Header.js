@@ -21,11 +21,47 @@ function Header() {
   };
 
   const handleSearch = async (e) => {
-    //e.preventDefault();
+    e.preventDefault();
     // send the search value to backend /product/search
-    console.log("User has searched" + search);
-    nav(`/productpage?search=${search}`);
+    console.log("User has searched " + search);
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/product/search?input=${search}`
+      );
+      console.log(response.data);
+      if (Array.isArray(response.data)) {
+        // One product is found
+        if (response.data.length === 1) {
+          const productSku = response.data[0].productSku;
+          console.log("product sku is ", productSku);
+          nav(`/productpage?sku=${productSku}`);
+        } // List of products are found
+        else if (response.data.length > 1) {
+          nav(`/search?sq=${search}`);
+        } else {
+          console.log("No products found");
+        }
+      } else {
+        console.log("Unexpected response format");
+      }
+    } catch (err) {
+      if (err.response) {
+        // The request was made, but the server responded with a status code
+        // No products found
+        console.log("Error response data:", err.response.data);
+        nav(`/error?msg=${err.response.data}`);
+      } else if (err.request) {
+        // The request was made, but no response was received
+        console.log("Error request:", err.request);
+        alert("No response received from the server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error message:", err.message);
+        alert("An error occurred: " + err.message);
+      }
+    }
   };
+
   return (
     <div className="header">
       <a href="/">

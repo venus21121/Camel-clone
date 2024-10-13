@@ -13,6 +13,7 @@ function Home({ h_products }) {
   };
 
   const productRows = chunkArray(h_products, itemsPerRow);
+  const amazonUrl = "https://www.amazon.com/dp/";
 
   return (
     <div className="home">
@@ -22,11 +23,11 @@ function Home({ h_products }) {
           <div key={rowIndex} className="product_items_row">
             {row.map((product) => (
               <Product
-                id={product.id}
+                id={product.productId}
                 image={product.imgUrl}
-                title={product.title}
-                b_price={product.price}
-                url={product.productUrl}
+                title={product.productName}
+                b_price={product.currentPrice}
+                url={amazonUrl + product.productSku}
               />
             ))}
           </div>
