@@ -1,5 +1,4 @@
 import React from "react";
-import "./Pricewatch.css";
 
 function Pricewatch() {
   return (

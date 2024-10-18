@@ -29,12 +29,6 @@ function Home({ h_products }) {
     }
   };
 
-  // Get the currently displayed products
-  const displayedProducts = h_products.slice(
-    currentIndex,
-    currentIndex + itemsToShow
-  );
-
   return (
     <div className="home">
       <div className="home_container flex flex-col items-center p-4 bg-gray-100">
