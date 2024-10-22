@@ -4,12 +4,15 @@ import PersonIcon from "@mui/icons-material/Person";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
-import { useAuth } from "./AuthContext";
+//import { useAuth } from "./AuthContext";
+import useAuth from "../hooks/useAuth"; // Import useAuth hook
+
 import logo from "../../Assets/amaSave.png"; // Adjust the path as necessary
 import axios from "axios";
 
 function Header() {
-  const { isAuthenticated, logout } = useAuth(); // Access authentication context
+  // const { isAuthenticated, logout } = useAuth(); // Access authentication context
+  const { auth, setAuth } = useAuth(); // Access authentication context
   const [search, setSearch] = useState("");
   const nav = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown
@@ -31,10 +34,20 @@ function Header() {
     };
   }, [dropdownRef]);
 
+  // const handleLogout = async () => {
+  //   logout();
+  //   console.log("User logged out");
+  // };
   const handleLogout = async () => {
-    await axios.post("http://localhost:8080/user/logout");
-    logout();
+    // if used in more components, this should be in context
+    // axios to /logout endpoint
     console.log("User logged out");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    console.log("localStroage: ", localStorage);
+
+    setAuth({});
+    nav("/login"); // Redirect to login after logout
   };
 
   const handleSearch = async (e) => {
@@ -103,13 +116,25 @@ function Header() {
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
             <div className="py-2">
-              {isAuthenticated ? (
+              {auth?.user ? (
                 <>
                   <Link
                     to="/account"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
                     My Account
+                  </Link>
+                  <Link
+                    to="/pricewatch"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    My pricewatch
+                  </Link>
+                  <Link
+                    to="/admin"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    Admin Page
                   </Link>
                   <button
                     onClick={handleLogout}

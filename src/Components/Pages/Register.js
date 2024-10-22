@@ -1,32 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "../Navigation/AuthContext";
+import useAuth from "../hooks/useAuth"; // Import useAuth hook
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registerError, setRegisterError] = useState("");
-  const { login } = useAuth();
   const navigate = useNavigate(); // For redirection
+  const { auth, setAuth } = useAuth(); // Access setAuth from the context
 
+  // Check if the user is authenticated
+  useEffect(() => {
+    if (auth?.user) {
+      // Check if user is logged in
+      navigate("/"); // Redirect to home page
+    }
+  }, [auth, navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/user/register", {
-        userEmail: email,
+      const response = await axios.post("http://localhost:8080/auth/signup", {
+        email: email,
         password: password,
       });
       console.log("Register Successful", response.data);
-      login();
+      const accessToken = response?.data?.token; // Extract token
+      console.log("Access Token; ", accessToken);
+
+      setAuth({ email, accessToken }); // Update auth context
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(email));
+      console.log("localStroage: ", localStorage);
+
+      setEmail(""); // Clear the form inputs
+      setPassword("");
       navigate("/");
     } catch (error) {
+      // Handle 400 Bad Request specifically
+      if (error.response && error.response.status === 400) {
+        setRegisterError(
+          error.response.data.description || "This email is already registered."
+        );
+      } else {
+        setRegisterError("An error occurred. Please try again later.");
+      }
       console.error(
         "Register Error:",
         error.response ? error.response.data : error
-      );
-      setRegisterError(
-        "This email is already registered. Please choose another one."
       );
     }
   };
