@@ -4,14 +4,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
-//import { useAuth } from "./AuthContext";
 import useAuth from "../hooks/useAuth"; // Import useAuth hook
 
 import logo from "../../Assets/amaSave.png"; // Adjust the path as necessary
 import axios from "axios";
 
 function Header() {
-  // const { isAuthenticated, logout } = useAuth(); // Access authentication context
   const { auth, setAuth } = useAuth(); // Access authentication context
   const [search, setSearch] = useState("");
   const nav = useNavigate();
@@ -34,10 +32,6 @@ function Header() {
     };
   }, [dropdownRef]);
 
-  // const handleLogout = async () => {
-  //   logout();
-  //   console.log("User logged out");
-  // };
   const handleLogout = async () => {
     // if used in more components, this should be in context
     // axios to /logout endpoint

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { axiosPrivate } from "../api/axios";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 // Price Watch Forms inside the product page
 const PriceWatchForm = ({ priceWatch }) => {
@@ -7,6 +7,7 @@ const PriceWatchForm = ({ priceWatch }) => {
     priceWatch.desiredPrice.toFixed(2)
   );
   const [errMsg, setErrMsg] = useState("");
+  const axiosPrivate = useAxiosPrivate();
 
   // Handles user price format
   const handlePriceChange = (e) => {

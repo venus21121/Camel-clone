@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./Components/Navigation/Header.js";
 import Home from "./Components/Pages/Home.js";
-import Pricewatch from "./Components/Navigation/Pricewatch.js";
+import Pricewatch from "./Components/Pages/Pricewatch.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Register from "./Components/Pages/Register.js";

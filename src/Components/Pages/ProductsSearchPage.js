@@ -42,33 +42,48 @@ function ProductsSearchPage() {
             className="flex items-center border border-gray-200 rounded-lg p-4 mb-4 shadow-md hover:shadow-lg transition-shadow duration-300"
           >
             {/* Make the entire product item clickable */}
-            <Link
-              to={`/productpage?sku=${product.productSku}`} // Navigate to ProductPage with sku as a query parameter
-              className="flex items-center flex-1" // Ensures full item is clickable
-            >
-              <img
-                className="w-24 h-24 object-contain rounded-md mr-4"
-                src={product.imgUrl}
-                alt={product.productName}
-              />
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold mb-2">
-                  {product.productName}
-                </h2>
-                <h2 className="text-md font-bold text-green-600 mb-4">
-                  ${product.currentPrice}
-                </h2>
-                <a
-                  href={amazonUrl + product.productSku}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
-                    View at Amazon
-                  </button>
-                </a>
-              </div>
-            </Link>
+            <div className="flex flex-1">
+              {/* Link to Product Page for image and title only */}
+              <Link
+                to={`/productpage?sku=${product.productSku}`} // Navigate to ProductPage with SKU as a query parameter
+                className="flex items-center flex-1"
+              >
+                <img
+                  className="w-24 h-24 object-contain rounded-md mr-4"
+                  src={product.imgUrl}
+                  alt={product.productName}
+                />
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold mb-2 hover:underline">
+                    {product.productName}
+                  </h2>
+                  {/* <h2 className="text-md font-bold text-green-600 mb-4">
+                    ${product.currentPrice.toFixed(2)}
+                  </h2> */}
+                  {product.currentPrice === -1 ? (
+                    <h3 className="text-md font-bold text-green-600 mb-4">
+                      Currently Unavailable
+                    </h3>
+                  ) : (
+                    <h2 className="text-md font-bold text-green-600 mb-4">
+                      ${product.currentPrice.toFixed(2)}
+                    </h2>
+                  )}
+                </div>
+              </Link>
+
+              {/* Separate Amazon link button */}
+              <a
+                href={amazonUrl + product.productSku}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-4" // Optional margin to separate it visually
+              >
+                <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
+                  View at Amazon
+                </button>
+              </a>
+            </div>
           </li>
         ))}
       </ul>
