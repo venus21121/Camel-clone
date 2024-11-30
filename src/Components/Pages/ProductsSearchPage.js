@@ -57,9 +57,6 @@ function ProductsSearchPage() {
                   <h2 className="text-lg font-semibold mb-2 hover:underline">
                     {product.productName}
                   </h2>
-                  {/* <h2 className="text-md font-bold text-green-600 mb-4">
-                    ${product.currentPrice.toFixed(2)}
-                  </h2> */}
                   {product.currentPrice === -1 ? (
                     <h3 className="text-md font-bold text-green-600 mb-4">
                       Currently Unavailable

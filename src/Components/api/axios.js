@@ -8,5 +8,5 @@ export default axios.create({
 export const axiosPrivate = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  //withCredentials: true, // we can include this when we want to use cookies for refresh token
+  //withCredentials: true, // We can include this when we want to use cookies for refresh token
 });
