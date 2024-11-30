@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Product from "../Navigation/Product.js";
-
 function Home({ h_products }) {
   const itemsToShow = 5; // Show 5 products at a time
   const amazonUrl = "https://www.amazon.com/dp/";
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // State to manage the index of the first product displayed
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,11 +28,12 @@ function Home({ h_products }) {
       setCurrentIndex(h_products.length - (h_products.length % itemsToShow)); // Loop to the end
     }
   };
+  console.log("Current auth state:", user);
 
   return (
     <div className="home">
       <div className="home_container flex flex-col items-center p-4 bg-gray-100">
-        {" "}
+        {user ? <h1>Welcome {user}</h1> : <h1></h1>}
         {/* Added padding */}
         <h1 className="mb-4 text-2xl font-bold">Popular Products</h1>
         <div className="relative w-full max-w-screen-xl overflow-hidden p-4">
