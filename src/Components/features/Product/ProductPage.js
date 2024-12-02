@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import PriceWatchForm from "../forms/PriceWatchForm";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import PriceWatchForm from "../PriceWatch/PriceWatchForm";
+import useAuth from "../../hooks/useAuth";
 function ProductPage() {
   const [product, setProduct] = useState(null);
   const amazonUrl = "https://www.amazon.com/dp/";

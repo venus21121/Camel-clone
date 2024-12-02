@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Product from "../Navigation/Product.js";
-function Home({ h_products }) {
+import Product from "./Product/Product.js";
+function HomePage({ h_products }) {
   const itemsToShow = 5; // Show 5 products at a time
   const amazonUrl = "https://www.amazon.com/dp/";
   const user = JSON.parse(localStorage.getItem("user"));
@@ -89,4 +89,4 @@ function Home({ h_products }) {
   );
 }
 
-export default Home;
+export default HomePage;

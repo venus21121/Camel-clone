@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Users from "../User";
+import Users from "./User";
 // This is our Admin page, currently, it can access all registered Users
 const Admin = () => {
   return (

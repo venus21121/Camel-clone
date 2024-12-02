@@ -19,7 +19,7 @@ const useAxiosPrivate = () => {
         return Promise.reject(error);
       }
     );
-
+    // Response interceptor to handle token expiration
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       (error) => {
@@ -29,7 +29,7 @@ const useAxiosPrivate = () => {
         return Promise.reject(error);
       }
     );
-
+    // Cleanup interceptors when the component is unmounted
     return () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);

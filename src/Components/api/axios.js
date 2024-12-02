@@ -1,6 +1,7 @@
 import axios from "axios";
 const BASE_URL = "http://localhost:8080";
 
+// Default Axios instance
 export default axios.create({
   baseURL: BASE_URL,
 });
@@ -8,5 +9,5 @@ export default axios.create({
 export const axiosPrivate = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  //withCredentials: true, // We can include this when we want to use cookies for refresh token
+  // withCredentials can be added if you plan to use cookies or refresh tokens in the future
 });

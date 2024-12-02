@@ -1,8 +1,7 @@
+import useAuth from "../../hooks/useAuth";
+import axios from "../../api/axios";
 import { useRef, useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth"; // Import useAuth hook
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "../api/axios";
-
 const LOGIN_URL = "/auth/login"; // Your backend login URL
 
 const Login = () => {

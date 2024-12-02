@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./Components/Navigation/Header.js";
-import Home from "./Components/Pages/Home.js";
-import Pricewatch from "./Components/Pages/Pricewatch.js";
+import Header from "./Components/navigation/Header.js";
+import HomePage from "./Components/features/HomePage.js";
+import PricewatchPage from "./Components/features/PriceWatch/PricewatchPage.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Register from "./Components/Pages/Register.js";
-import ProductPage from "./Components/Pages/ProductPage.js";
-import ProductSearchPage from "./Components/Pages/ProductsSearchPage.js";
-import ProductNotFoundPage from "./Components/Pages/ProductNotFoundPage.js";
-import RequireAuth from "./Components/Navigation/RequireAuth.js";
-import Login from "./Components/Pages/Login.js";
-import { AuthProvider } from "./Components/context/AuthProvider.js";
-import Admin from "./Components/Pages/Admin.js";
+import Register from "./Components/features/Auth/Register.js";
+import ProductPage from "./Components/features/Product/ProductPage.js";
+import ProductSearchPage from "./Components/features/Product/ProductsSearchPage.js";
+import ProductNotFoundPage from "./Components/features/Product/ProductNotFoundPage.js";
+import RequireAuth from "./Components/navigation/RequireAuth.js";
+import Login from "./Components/features/Auth/Login.js";
+import { AuthProvider } from "./Components/features/Auth/AuthProvider.js";
+import Admin from "./Components/features/Admin/AdminPage.js";
 const App = () => {
   const [products, setProducts] = useState([]);
 
@@ -39,7 +39,7 @@ const App = () => {
               path="/"
               element={
                 <>
-                  <Home h_products={products} />
+                  <HomePage h_products={products} />
                 </>
               }
             />
@@ -85,7 +85,7 @@ const App = () => {
             />
             {/* we want to protect these routes */}
             <Route element={<RequireAuth />}>
-              <Route path="/pricewatch" element={<Pricewatch />} />
+              <Route path="/pricewatch" element={<PricewatchPage />} />
             </Route>
             <Route element={<RequireAuth />}>
               <Route path="/admin" element={<Admin />} />

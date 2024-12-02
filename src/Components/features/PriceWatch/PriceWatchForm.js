@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 // Price Watch Forms inside the product page
 const PriceWatchForm = ({ priceWatch }) => {

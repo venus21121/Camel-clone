@@ -1,5 +1,5 @@
 import { useContext, useDebugValue } from "react";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../features/Auth/AuthProvider";
 
 // This is used for saving context auth auth with access token and user email
 const useAuth = () => {

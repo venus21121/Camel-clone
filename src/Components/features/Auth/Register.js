@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useAuth from "../hooks/useAuth"; // Import useAuth hook
+import useAuth from "../../hooks/useAuth"; // Import useAuth hook
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Register() {

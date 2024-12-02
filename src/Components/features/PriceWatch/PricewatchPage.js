@@ -1,9 +1,10 @@
+// User price Watch dashboard page
 import React, { useEffect, useState } from "react";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
-import Product from "../Navigation/Product";
+import Product from "../Product/Product";
 
-function Pricewatch() {
+function PricewatchPage() {
   const [userPriceWatches, setUserPriceWatches] = useState([]);
   const [editPriceWatchId, setEditPriceWatchId] = useState(null);
   const [desiredPrice, setDesiredPrice] = useState("");
@@ -206,4 +207,4 @@ function Pricewatch() {
   );
 }
 
-export default Pricewatch;
+export default PricewatchPage;
