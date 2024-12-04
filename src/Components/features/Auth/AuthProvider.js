@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom"; // For navigating to logout
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({});
 
@@ -9,34 +9,32 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const isTokenExpired = (token) => {
-    if (!token) return true; // Token is not present
-    const decoded = jwtDecode(token);
-    return decoded.exp * 1000 < Date.now(); // Check if token is expired
+    try {
+      const { exp } = jwtDecode(token); // Decode and get expiry
+      return exp * 1000 < Date.now(); // Compare with the current time
+    } catch {
+      return true; // If decoding fails, treat it as expired
+    }
   };
 
-  // Update your useEffect in AuthProvider
   useEffect(() => {
-    console.log("localStroage: ", localStorage);
-
     const accessToken = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
 
-    // Check if the access token is expired
     if (accessToken) {
       if (isTokenExpired(accessToken)) {
-        // Handle expired token
-        // Remove from Local Storage
+        // Clear expired token
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        // Empty our context memory
         setAuth({});
-        navigate("/login");
-        console.log("Token is expired checked by frontened");
+        navigate("/login"); // Redirect to login
+        console.warn("Token expired. User redirected to login.");
       } else {
         setAuth({ user, accessToken });
       }
     }
   }, [navigate]);
+
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
       {children}

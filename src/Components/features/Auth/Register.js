@@ -1,43 +1,43 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import useAuth from "../../hooks/useAuth"; // Import useAuth hook
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import axios from "../../api/axios";
+import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
+const REGISTER_URL = "/auth/signup"; // Your backend login URL
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [registerError, setRegisterError] = useState("");
   const navigate = useNavigate(); // For redirection
   const { auth, setAuth } = useAuth(); // Access setAuth from the context
 
-  // Check if the user is authenticated
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
+
+  // Redirect to home if already logged in
   useEffect(() => {
     if (auth?.user) {
-      // Check if user is logged in
-      navigate("/"); // Redirect to home page
+      navigate("/");
     }
   }, [auth, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/auth/signup", {
+      const response = await axios.post(REGISTER_URL, {
         email: email,
         password: password,
       });
-      console.log("Register Successful", response.data);
-      const accessToken = response?.data?.token; // Extract token
-      console.log("Access Token; ", accessToken);
+      const accessToken = response?.data?.token;
 
-      setAuth({ email, accessToken }); // Update auth context
+      // Update auth context and localStorage
+      setAuth({ email, accessToken });
       localStorage.setItem("token", accessToken);
       localStorage.setItem("user", JSON.stringify(email));
-      console.log("localStroage: ", localStorage);
 
-      setEmail(""); // Clear the form inputs
+      setEmail("");
       setPassword("");
       navigate("/");
     } catch (error) {
-      // Handle 400 Bad Request specifically
       if (error.response && error.response.status === 400) {
         setRegisterError(
           error.response.data.description || "This email is already registered."

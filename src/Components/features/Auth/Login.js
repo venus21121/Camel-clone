@@ -1,86 +1,88 @@
-import useAuth from "../../hooks/useAuth";
-import axios from "../../api/axios";
 import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import axios from "../../api/axios";
+
 const LOGIN_URL = "/auth/login"; // Your backend login URL
 
 const Login = () => {
+  const navigate = useNavigate();
   const { auth, setAuth } = useAuth(); // Access setAuth from the context
-  const navigate = useNavigate(); // Navigation after successful login
   const location = useLocation();
   const from = location.state?.from?.pathname || "/"; // Redirect after login
 
-  const userRef = useRef(); // For auto-focus on input
-  const errRef = useRef(null); // Create a ref
+  const userRef = useRef(); // Auto-focus on username input
+  const errRef = useRef(null); // Focus on error message
 
-  const [user, setUser] = useState(""); // Username or email
-  const [pwd, setPwd] = useState(""); // Password
-  const [errMsg, setErrMsg] = useState(""); // Error message
+  const [user, setUser] = useState(""); // User email
+  const [pwd, setPwd] = useState("");
+  const [errMsg, setErrMsg] = useState("");
 
+  // Auto-focus on username input when the component loads
   useEffect(() => {
-    if (auth?.user) {
-      // Check if user is logged in
-      navigate("/"); // Redirect to home page
-    }
-  }, [auth, navigate]);
-  useEffect(() => {
-    userRef.current.focus(); // Focus on username input on component load
+    userRef.current.focus();
   }, []);
 
+  // Redirect to home if already logged in
   useEffect(() => {
-    setErrMsg(""); // Clear error when user or pwd changes
-  }, [user, pwd]);
+    let isMounted = true;
+    if (auth?.user && isMounted) {
+      navigate("/");
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [auth, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrMsg(""); // Reset error message
+    const controller = new AbortController(); // For request cancellation
 
     try {
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({ email: user, password: pwd }),
-
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          //withCredentials: true, // Use this if sending cookies
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal, // Attach AbortController signal
         }
       );
-      console.log("Login Successful", response.data);
-      console.log("response:", response);
-      const accessToken = response?.data?.token; // Extract token
-      console.log("Access Token; ", accessToken);
 
-      setAuth({ user, accessToken }); // Update auth context
+      const accessToken = response?.data?.token;
       localStorage.setItem("token", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
-      console.log("localStroage: ", localStorage);
+      setAuth({ user, accessToken }); // Set authentication context
 
-      setUser(""); // Clear the form inputs
+      // Clear inputs
+      setUser("");
       setPwd("");
-      navigate(from, { replace: true }); // Redirect to previous page or home
-    } catch (err) {
-      console.log("Error object:", err); // Add this for better insight
 
-      if (!err?.response) {
-        console.log("NO SERVER RESPOND");
-        setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
-      } else if (err.response?.status === 401) {
-        setErrMsg("Incorrect username or password. Please try again.");
-      } else if (err.response?.data?.message) {
-        // Use the message from the server response if available
-        setErrMsg(`Error: ${err.response.data.message}`);
-      } else {
-        setErrMsg("Login Failed");
-      }
-      // Focus on error message only if it's not null
-      if (errRef.current) {
-        errRef.current.focus();
-      }
+      // Redirect to previous page
+      navigate(from, { replace: true });
+    } catch (err) {
+      // Handle errors
+      handleError(err);
+    } finally {
+      controller.abort(); // Cancel Axios request on cleanup
     }
+  };
+
+  const handleError = (err) => {
+    if (!err?.response) {
+      setErrMsg("No Server Response");
+    } else if (err.response?.status === 400) {
+      setErrMsg("Missing Username or Password");
+    } else if (err.response?.status === 401) {
+      setErrMsg("Incorrect username or password.");
+    } else if (err.response?.data?.message) {
+      setErrMsg(`Error: ${err.response.data.message}`);
+    } else {
+      setErrMsg("Login Failed");
+    }
+
+    // Focus on error message if it exists
+    if (errRef.current) errRef.current.focus();
   };
 
   return (

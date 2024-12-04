@@ -1,10 +1,9 @@
 import { useContext, useDebugValue } from "react";
 import AuthContext from "../features/Auth/AuthProvider";
 
-// This is used for saving context auth auth with access token and user email
+// Custom hook to access authentication context
 const useAuth = () => {
   const { auth } = useContext(AuthContext);
-  console.log("auth: ", auth);
   useDebugValue(auth, (auth) => (auth?.user ? "Logged In" : "Logged Out"));
   return useContext(AuthContext); // Returns the context object, including auth and setAuth
 };

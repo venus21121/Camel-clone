@@ -1,52 +1,50 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 const Users = () => {
-  const { auth } = useAuth();
-
   const [users, setUsers] = useState([]);
+  const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
 
-    // Currently, accessing by entering admin url would redirect to home since auth accesstoken is not yet updated until after directing to login.
-    // If we want to enter admin url without error, then we can use local storage to access token instead.
     const getUsers = async () => {
       try {
-        console.log("Current access token:", auth.accessToken); // Log to check the token
+        console.log("Current access token:", auth.accessToken); // Check token for debugging
 
         const response = await axiosPrivate.get("/users/", {
-          signal: controller.signal, // For request cancellation
+          signal: controller.signal, // Cancel request if the component unmounts
         });
-        console.log(response.data);
 
-        isMounted && setUsers(response.data);
+        setUsers(response.data); // Set users data from response
       } catch (err) {
-        console.error(err);
-        navigate("/login", { state: { from: location }, replace: true });
+        console.error("Failed to fetch users:", err); // Log error
+        navigate("/login", { state: { from: location }, replace: true }); // Redirect to login if error
       }
     };
 
-    getUsers();
+    if (auth.accessToken) {
+      getUsers();
+    }
 
     return () => {
       isMounted = false;
       controller.abort();
     };
-  }, [axiosPrivate, navigate, location]);
+  }, [auth.accessToken, axiosPrivate, navigate, location]);
 
   return (
     <article>
       <h2>Users List</h2>
       {users.length ? (
         <ul>
-          {users.map((user, i) => (
-            <li key={i}>{user.username}</li>
+          {users.map((user) => (
+            <li key={user.id}>{user.username}</li>
           ))}
         </ul>
       ) : (

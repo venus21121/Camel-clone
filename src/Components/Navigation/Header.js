@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth"; // Import useAuth hook
+import axios from "../api/axios";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
-import useAuth from "../hooks/useAuth"; // Import useAuth hook
-
 import logo from "../../Assets/amaSave.png"; // Adjust the path as necessary
-import axios from "axios";
+
+const PRODUCT_URL = "http://localhost:8080/product/search";
 
 function Header() {
-  const { auth, setAuth } = useAuth(); // Access authentication context
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const { auth, setAuth } = useAuth();
+  const dropdownRef = useRef(null);
   const nav = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown
-  const dropdownRef = useRef(null); // Reference for the dropdown
 
   // Close dropdown when clicking outside of it
   useEffect(() => {
@@ -23,44 +23,35 @@ function Header() {
         setDropdownOpen(false);
       }
     };
-
-    // Attach event listener
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // Cleanup event listener
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside); // Cleanup event listener
     };
   }, [dropdownRef]);
 
   const handleLogout = async () => {
-    // if used in more components, this should be in context
-    // axios to /logout endpoint
-    console.log("User logged out");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    console.log("localStroage: ", localStorage);
-
     setAuth({});
     nav("/login"); // Redirect to login after logout
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    // Check if search input is empty
+
+    // Exit if input is empty
     if (search.trim() === "") {
-      return; // Exit the function early if the input is empty
+      return;
     }
 
-    console.log("User has searched " + search);
     try {
-      const response = await axios.get(
-        `http://localhost:8080/product/search?input=${search}`
-      );
-      if (Array.isArray(response.data)) {
-        if (response.data.length === 1) {
-          const productSku = response.data[0].productSku;
+      const response = await axios.get(`${PRODUCT_URL}?input=${search}`);
+      const searchResult = response.data;
+      if (Array.isArray(searchResult)) {
+        if (searchResult.length === 1) {
+          const productSku = searchResult[0].productSku;
           nav(`/productpage?sku=${productSku}`);
-        } else if (response.data.length > 1) {
+        } else if (searchResult.length > 1) {
           nav(`/search?sq=${search}`);
         } else {
           console.log("No products found");
@@ -87,8 +78,6 @@ function Header() {
           onChange={(e) => setSearch(e.target.value)}
           type="search"
           placeholder="Find Amazon Products"
-          id="search"
-          name="search"
         />
         <button
           type="submit"
@@ -122,14 +111,14 @@ function Header() {
                     to="/pricewatch"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    My pricewatch
+                    My Pricewatch
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/admin"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
                     Admin Page
-                  </Link>
+                  </Link> */}
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"

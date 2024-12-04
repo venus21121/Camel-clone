@@ -1,17 +1,9 @@
 import React from "react";
-import { useLocation } from "react-router-dom"; // Import Link for navigation
+import { useLocation } from "react-router-dom";
 
 function ProductNotFoundPage() {
   const location = useLocation();
-
-  // Function to get query parameters
-  const getQueryParam = (param) => {
-    const params = new URLSearchParams(location.search);
-    return params.get(param);
-  };
-
-  // Error messages from backend
-  const search = getQueryParam("sq");
+  const search = new URLSearchParams(location.search).get("sq");
 
   return (
     <div className="product_notfound_page flex flex-col items-center justify-center h-screen bg-gray-100">

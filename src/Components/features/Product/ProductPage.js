@@ -1,114 +1,114 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import axios from "axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import PriceWatchForm from "../PriceWatch/PriceWatchForm";
 import useAuth from "../../hooks/useAuth";
+import axios from "../../api/axios";
+
+const AMAZON_URL = "https://www.amazon.com/dp/";
+const PRODUCT_URL = "/product/";
+const PRICEWATCH_URLS = {
+  FETCH: "/api/pricewatch/list",
+  CREATE: "/api/pricewatch/create",
+};
+
 function ProductPage() {
   const [product, setProduct] = useState(null);
-  const amazonUrl = "https://www.amazon.com/dp/";
-  const location = useLocation();
-  const axiosPrivate = useAxiosPrivate();
-
-  // Authentication
-  const { auth } = useAuth();
-
-  // PriceWatch Forms
+  // Price watch forms
+  const [oldPriceWatches, setOldPriceWatches] = useState([]);
+  const [newPriceWatches, setNewPriceWatches] = useState([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [targetPrice, setTargetPrice] = useState("");
-  const [userPriceWatches, setUserPriceWatches] = useState([]);
-  const [priceWatches, setPriceWatches] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
-  // Handles visibility of new PriceWatch Form
-  const handleCreatePriceWatchClick = () => {
-    setIsFormVisible(!isFormVisible);
-  };
+  const { auth } = useAuth();
+  const location = useLocation();
+  const axiosPrivate = useAxiosPrivate();
+  const productSku = new URLSearchParams(location.search).get("sku");
 
-  // Handles user price format
-  const handlePriceChange = (e) => {
-    const value = e.target.value;
-    const numericValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-    const formattedValue = (parseFloat(numericValue) / 100).toFixed(2); // Convert to money format
-    setTargetPrice(formattedValue);
-  };
-
-  // Create PriceWatch
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrMsg("");
-    // Check if desired price is valid
-    if (parseFloat(targetPrice) >= product.currentPrice) {
-      setErrMsg(
-        "Desired Price cannot be higher or equal to the current product price."
-      );
-    } else if (parseFloat(targetPrice) <= 0) {
-      setErrMsg("Desired Price cannot be 0 or negative.");
-    } else {
-      try {
-        const response = await axiosPrivate.post(
-          "/api/pricewatch/create",
-          {}, // No data in the body since you're using query params
-          {
-            params: {
-              productId: product.productId,
-              desiredPrice: targetPrice,
-            },
-            // other necessary fields like productId, userId, etc.
-          }
-        );
-        console.log("Price Watch Created:", response.data);
-        // Update the state with the new pricewatch
-        setUserPriceWatches((prev) => [...prev, response.data]);
-        setTargetPrice(""); // Reset the input field
-      } catch (error) {
-        console.error("Error creating price watch:", error);
-      }
-    }
-  };
-
-  const getQueryParam = (param) => {
-    const params = new URLSearchParams(location.search);
-    return params.get(param);
-  };
-  const productSku = getQueryParam("sku");
-
-  // Retrive product details
+  // Fetch product details
   useEffect(() => {
-    const fetchProductDetails = async (sku) => {
+    let isMounted = true;
+    if (!productSku) return;
+
+    const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/product/${sku}`
-        ); // Replace with your actual API endpoint
-        setProduct(response.data);
-        console.log("Product detail: ", response.data);
+        const response = await axios.get(PRODUCT_URL + productSku);
+        if (isMounted) setProduct(response.data);
       } catch (error) {
         console.error("Error fetching product details:", error);
       }
     };
-    if (productSku) {
-      fetchProductDetails(productSku);
-    }
+
+    fetchProductDetails();
+
+    return () => {
+      isMounted = false;
+    };
   }, [productSku]);
 
-  // Retrieve list of PriceWatch
+  // Fetch price watches
   useEffect(() => {
+    if (!product?.productId) return;
+
+    setNewPriceWatches([]); // Reset the input field
+
     const fetchPriceWatches = async () => {
       try {
         const response = await axiosPrivate.get(
-          `/api/pricewatch/list?productId=${product.productId}`
+          `${PRICEWATCH_URLS.FETCH}?productId=${product.productId}`
         );
-        setPriceWatches(response.data); // Assume response.data is an array of price watches
+        setOldPriceWatches(response.data);
       } catch (error) {
         console.error("Error fetching price watches:", error);
       }
     };
-    if (product?.productId) {
-      fetchPriceWatches();
-    }
+
+    fetchPriceWatches();
   }, [product?.productId, axiosPrivate]);
 
-  if (!product) return <div>Loading...</div>; // Handle loading state
+  // Toggle form visibility
+  const handleCreatePriceWatchClick = () => setIsFormVisible((prev) => !prev);
+
+  // Handles price input formating
+  const handlePriceChange = (e) => {
+    const numericValue = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+    const formattedValue = (parseFloat(numericValue) / 100).toFixed(2);
+    setTargetPrice(formattedValue);
+  };
+
+  // Create PriceWatch
+  const handlePriceWatchSubmit = async (e) => {
+    e.preventDefault();
+    setErrMsg("");
+
+    const desiredPrice = parseFloat(targetPrice);
+    if (desiredPrice >= product.currentPrice) {
+      return setErrMsg("Price too high.");
+    }
+    if (desiredPrice <= 0) {
+      return setErrMsg("Price must be higher.");
+    }
+    try {
+      const response = await axiosPrivate.post(
+        PRICEWATCH_URLS.CREATE,
+        {},
+        {
+          params: {
+            productId: product.productId,
+            desiredPrice,
+          },
+        }
+      );
+
+      setNewPriceWatches((prev) => [...prev, response.data]);
+      setTargetPrice(""); // Reset the input field
+    } catch (error) {
+      console.error("Error creating price watch:", error);
+    }
+  };
+
+  if (!product) return <div>Loading...</div>;
 
   return (
     <div className="product_page max-w-8xl p-6 mx-auto">
@@ -135,7 +135,7 @@ function ProductPage() {
                   </h3>
                 )}
                 <a
-                  href={amazonUrl + product.productSku}
+                  href={AMAZON_URL + product.productSku}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -185,7 +185,10 @@ function ProductPage() {
                       <h4 className="text-lg font-semibold mb-4">
                         Set a Price Watch
                       </h4>
-                      <form onSubmit={handleSubmit} className="space-y-4">
+                      <form
+                        onSubmit={handlePriceWatchSubmit}
+                        className="space-y-4"
+                      >
                         <div>
                           {errMsg && (
                             <p className="text-red-600 mb-4">{errMsg}</p>
@@ -222,15 +225,15 @@ function ProductPage() {
 
                   {/* Existing Price Watches */}
                   <div className="space-y-4">
-                    {userPriceWatches.map((priceWatch) => (
+                    {newPriceWatches.map((priceWatch, index) => (
                       <PriceWatchForm
-                        key={priceWatch.id}
+                        key={`user-${priceWatch.id || `fallback-${index}`}`}
                         priceWatch={priceWatch}
                       />
                     ))}
-                    {priceWatches.map((priceWatch) => (
+                    {oldPriceWatches.map((priceWatch, index) => (
                       <PriceWatchForm
-                        key={priceWatch.id}
+                        key={`global-${priceWatch.id || `fallback-${index}`}`}
                         priceWatch={priceWatch}
                       />
                     ))}

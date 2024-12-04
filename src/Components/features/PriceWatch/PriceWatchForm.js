@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
+const PRICEWATCH_URLS = {
+  UPDATE: "/api/pricewatch/update",
+  DELETE: "/api/pricewatch/delete",
+};
+
 // Price Watch Forms inside the product page
 const PriceWatchForm = ({ priceWatch }) => {
+  const [errMsg, setErrMsg] = useState("");
   const [desiredPrice, setDesiredPrice] = useState(
     priceWatch.desiredPrice.toFixed(2)
   );
-  const [errMsg, setErrMsg] = useState("");
   const axiosPrivate = useAxiosPrivate();
 
-  // Handles user price format
+  // Handle desired price input
   const handlePriceChange = (e) => {
     const value = e.target.value;
     const numericValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
@@ -17,44 +22,45 @@ const PriceWatchForm = ({ priceWatch }) => {
     setDesiredPrice(formattedValue);
   };
 
-  // Update PriceWatch
+  // Update price watch
   const handleUpdate = async (e) => {
     e.preventDefault();
     setErrMsg("");
-    // Check if desired price is valid
+
+    const currentPrice = priceWatch.product.currentPrice;
+    const priceToUpdate = parseFloat(desiredPrice);
+
     if (priceWatch?.priceWatchId) {
-      if (parseFloat(desiredPrice) >= priceWatch.product.currentPrice) {
-        setErrMsg(
-          "Desired Price cannot be higher or equal to the current product price."
+      if (priceToUpdate >= currentPrice) {
+        return setErrMsg("Price too high.");
+      }
+      if (priceToUpdate <= 0) {
+        return setErrMsg("Price must be higher.");
+      }
+      try {
+        await axiosPrivate.patch(
+          `${PRICEWATCH_URLS.UPDATE}?priceWatchId=${priceWatch.priceWatchId}&newDesiredPrice=${desiredPrice}`
         );
-      } else if (parseFloat(desiredPrice) <= 0) {
-        setErrMsg("Desired Price cannot be 0 or negative.");
-      } else {
-        try {
-          await axiosPrivate.patch(
-            `/api/pricewatch/update?priceWatchId=${priceWatch.priceWatchId}&newDesiredPrice=${desiredPrice}`
-          );
-          window.location.reload();
-        } catch (error) {
-          console.error("Error updating price watches:", error);
-        }
+        window.location.reload(); // Refresh page after successful update
+      } catch (error) {
+        console.error("Error updating price watches:", error);
       }
     }
   };
+
   // Delete PriceWatch
   const handleDelete = async () => {
     // Check if pricewatch is loaded
     if (priceWatch?.priceWatchId) {
-      // Send warning
       const userConfirmed = window.confirm(
         "Are you sure you want to delete this price watch?"
       );
       if (userConfirmed) {
         try {
           await axiosPrivate.delete(
-            `/api/pricewatch/delete?priceWatchId=${priceWatch.priceWatchId}`
+            `${PRICEWATCH_URLS.DELETE}?priceWatchId=${priceWatch.priceWatchId}`
           );
-          window.location.reload();
+          window.location.reload(); // Refresh page after successful delete
         } catch (error) {
           console.error("Error deleting price watches:", error);
         }
@@ -71,18 +77,20 @@ const PriceWatchForm = ({ priceWatch }) => {
       {errMsg && <p className="text-red-600 mb-4">{errMsg}</p>}
 
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        Desired Price:
+        Desired Price:{" "}
+        <input
+          id="desired-price"
+          name="desiredPrice"
+          type="text"
+          value={desiredPrice}
+          onChange={handlePriceChange}
+          onKeyDown={(e) =>
+            ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()
+          }
+          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 text-gray-700"
+          placeholder="e.g., 50.00"
+        />
       </label>
-      <input
-        type="text"
-        value={desiredPrice}
-        onChange={handlePriceChange}
-        onKeyDown={(e) =>
-          ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()
-        }
-        className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 text-gray-700"
-        placeholder="e.g., 50.00"
-      />
 
       <div className="flex space-x-4">
         <button
